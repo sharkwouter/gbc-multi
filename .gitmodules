@@ -1,0 +1,3 @@
+[submodule "vendor/gamebro"]
+	path = vendor/gamebro
+	url = git@github.com:fwsGonzo/gamebro.git
