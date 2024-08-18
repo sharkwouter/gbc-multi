@@ -41,7 +41,7 @@ void cleanupPlayers() {
         if(player->isConnected()) {
             new_players.push_back(player);
         } else {
-            SDL_Log("Removing player: %i", player->getIndex());
+            SDL_Log("Removing player: %i", player->getPlayerIndex());
             delete player;
         }
     }

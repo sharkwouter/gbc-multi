@@ -11,13 +11,13 @@ private:
     SDL_GameController * gamepad = nullptr;
     gbc::Machine * machine = nullptr;
     
-    SDL_JoystickID joystick_id  = -1;
+    SDL_JoystickID gamepad_id  = -1;
 public:
     Player(SDL_JoystickID id, std::vector<uint8_t> * romdata);
     ~Player();
 
-    int getIndex();
-    SDL_JoystickID getId() {return joystick_id;}
+    int getPlayerIndex();
+    SDL_JoystickID getGamepadId() {return gamepad_id;}
     bool isConnected();
 
     void update();
