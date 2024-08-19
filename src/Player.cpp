@@ -26,10 +26,15 @@ void Player::render(SDL_Texture * target) {
 
 int Player::getPlayerIndex() {
     if(this->gamepad) {
-        return SDL_GameControllerGetPlayerIndex(this->gamepad);
+        int player_index = SDL_GameControllerGetPlayerIndex(this->gamepad);
+        if (player_index >= 0) {
+            return player_index + 1;
+        } else {
+            return player_index;
+        }
     } else {
         // A keyboard player also has to have an index
-        return -2;
+        return 0;
     }
 }
 
