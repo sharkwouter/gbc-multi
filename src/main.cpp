@@ -70,7 +70,11 @@ void handleKeyboardDownInputEvent(SDL_Keycode key) {
 }
 
 int main(int argv, char** args) {
-    romdata = load_file("/home/wouter/Roms/GBC/Donkey Kong Country (USA, Europe) (En,Fr,De,Es,It).gbc");
+    if (argv != 2) {
+        printf("Please specify a game\n");
+        exit(5);
+    }
+    romdata = load_file(args[1]);
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER | SDL_INIT_TIMER) != 0) {
         printf("couldn't init SDL: %s", SDL_GetError());
@@ -88,9 +92,7 @@ int main(int argv, char** args) {
         printf("couldn't create renderer: %s", SDL_GetError());
     }
 
-    printf("Hello World!\n");
     SDL_Event event;
-
     while(running) {
 
         while (SDL_PollEvent(&event)) {
