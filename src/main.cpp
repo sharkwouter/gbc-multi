@@ -81,7 +81,7 @@ int main(int argv, char** args) {
         exit(1);
     }
 
-    SDL_Window * window = SDL_CreateWindow("GBC-Multi", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 144, 160, SDL_WINDOW_SHOWN);
+    SDL_Window * window = SDL_CreateWindow("GBC-Multi", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 160, 144, SDL_WINDOW_SHOWN);
     if (window == nullptr) {
         printf("couldn't create window: %s", SDL_GetError());
         exit(2);
@@ -94,7 +94,8 @@ int main(int argv, char** args) {
 
     SDL_Event event;
     while(running) {
-
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderClear(renderer);
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
@@ -121,6 +122,7 @@ int main(int argv, char** args) {
         for(Player * player : players) {
             player->render(renderer);
         }
+        SDL_RenderPresent(renderer);
     }
     for(Player * player : players) {
         delete player;

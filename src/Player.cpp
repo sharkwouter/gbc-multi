@@ -21,16 +21,17 @@ void Player::update() {
 
 }
 
+static u_int16_t pixels[160*144];
 void Player::render(SDL_Renderer * renderer) {
+    static SDL_Rect texture_rect = {0, 0, 160, 144};
     if (this->texture == nullptr) {
-        this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 160, 144);
+        this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING, 160, 144);
     }
     if(this->machine->is_running()) {
         this->machine->simulate_one_frame();
     }
-    for(u_int16_t pixel: this->machine->gpu.pixels()) {
-        // Write pixels
-    }
+    SDL_UpdateTexture(this->texture, &texture_rect, &this->machine->gpu.pixels()[0], 160*2);
+    SDL_RenderCopy(renderer, this->texture, NULL, NULL);
 }
 
 int Player::getPlayerIndex() {
