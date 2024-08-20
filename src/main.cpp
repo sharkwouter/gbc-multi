@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "Player.hpp"
+#include "FontManager.hpp"
+#include "FontType.hpp"
 #include "constants.hpp"
 
 
@@ -222,6 +224,9 @@ int main(int argv, char** args) {
         exit(5);
     }
 
+    FontManager * font_manager = new FontManager();
+    SDL_Texture * press_start = nullptr;
+
     SDL_Event event;
     while(running) {
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -251,8 +256,18 @@ int main(int argv, char** args) {
                     break;
             }
         }
-        if (!players.size()) {
+        SDL_Rect window_rect;
+        SDL_GetWindowSize(window, &window_rect.w, &window_rect.h);
 
+        if (players.size() == 0) {
+            if (!press_start) {
+                press_start = font_manager->getTexture(renderer, "Press start/enter", FontType::TITLE,  {0, 0, 0, 255});
+            }
+            SDL_Rect press_start_rect;
+            SDL_QueryTexture(press_start, NULL, NULL, &press_start_rect.w, &press_start_rect.h);
+            press_start_rect.x = window_rect.w/2 - press_start_rect.w/2;
+            press_start_rect.y = window_rect.h/2 - press_start_rect.h/2;
+            SDL_RenderCopy(renderer, press_start, NULL, &press_start_rect);
         }
 
         for(Player * player : players) {
@@ -260,11 +275,7 @@ int main(int argv, char** args) {
         }
 
         for(int i = 0; i < players.size(); i++) {
-            SDL_Rect window_rect;
-            
             SDL_Rect dst;
-            SDL_GetWindowSize(window, &window_rect.w, &window_rect.h);
-
             dst.x = i * window_rect.w/players.size();
             dst.y = 0;
             dst.w = window_rect.w/players.size();
@@ -275,6 +286,10 @@ int main(int argv, char** args) {
     }
     for(Player * player : players) {
         delete player;
+    }
+    free(font_manager);
+    if (press_start) {
+        SDL_DestroyTexture(press_start);
     }
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

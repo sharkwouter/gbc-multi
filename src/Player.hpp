@@ -9,6 +9,7 @@ class Player {
 
 private:
     SDL_GameController * gamepad = nullptr;
+    std::vector<uint8_t> * romdata;
     gbc::Machine * machine = nullptr;
     SDL_Texture * texture = nullptr;
 
