@@ -53,14 +53,78 @@ void cleanupPlayers() {
     players = new_players;
 }
 
-void handleGamepadInputEvent(SDL_ControllerButtonEvent cbutton) {
+void add_input(int gamepad_id, uint8_t button) {
+    for(Player * player : players) {
+        if (player->getGamepadId() == gamepad_id) {
+            player->add_input(button);
+        }
+    }
+}
+
+void remove_input(int gamepad_id, uint8_t button) {
+    for(Player * player : players) {
+        if (player->getGamepadId() == gamepad_id) {
+            player->remove_input(button);
+        }
+    }
+}
+
+void handleGamepadPressEvent(SDL_ControllerButtonEvent cbutton) {
     switch (cbutton.button)
     {
+        case SDL_CONTROLLER_BUTTON_BACK:
+            add_input(cbutton.which, gbc::BUTTON_SELECT);
+            break;
         case SDL_CONTROLLER_BUTTON_START:
-            running = false;
+            add_input(cbutton.which, gbc::BUTTON_START);
             break;
         case SDL_CONTROLLER_BUTTON_A:
-            SDL_Log("Controller %i pressed A", cbutton.which);
+            add_input(cbutton.which, gbc::BUTTON_A);
+            break;
+        case SDL_CONTROLLER_BUTTON_B:
+            add_input(cbutton.which, gbc::BUTTON_B);
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_UP:
+            add_input(cbutton.which, gbc::DPAD_UP);
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+            add_input(cbutton.which, gbc::DPAD_DOWN);
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+            add_input(cbutton.which, gbc::DPAD_LEFT);
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+            add_input(cbutton.which, gbc::DPAD_RIGHT);
+            break;
+    }
+}
+
+void handleGamepadReleaseEvent(SDL_ControllerButtonEvent cbutton) {
+    switch (cbutton.button)
+    {
+        case SDL_CONTROLLER_BUTTON_BACK:
+            remove_input(cbutton.which, gbc::BUTTON_SELECT);
+            break;
+        case SDL_CONTROLLER_BUTTON_START:
+            remove_input(cbutton.which, gbc::BUTTON_START);
+            break;
+        case SDL_CONTROLLER_BUTTON_A:
+            remove_input(cbutton.which, gbc::BUTTON_A);
+            break;
+        case SDL_CONTROLLER_BUTTON_B:
+            remove_input(cbutton.which, gbc::BUTTON_B);
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_UP:
+            remove_input(cbutton.which, gbc::DPAD_UP);
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+            remove_input(cbutton.which, gbc::DPAD_DOWN);
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+            remove_input(cbutton.which, gbc::DPAD_LEFT);
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+            remove_input(cbutton.which, gbc::DPAD_RIGHT);
             break;
     }
 }
@@ -113,7 +177,10 @@ int main(int argv, char** args) {
                     cleanupPlayers();
                     break;
                 case SDL_CONTROLLERBUTTONDOWN:
-                    handleGamepadInputEvent(event.cbutton);
+                    handleGamepadPressEvent(event.cbutton);
+                    break;
+                case SDL_CONTROLLERBUTTONUP:
+                    handleGamepadReleaseEvent(event.cbutton);
                     break;
                 case SDL_KEYDOWN:
                     handleKeyboardDownInputEvent(event.key.keysym.sym);

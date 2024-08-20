@@ -18,7 +18,7 @@ Player::~Player() {
 }
 
 void Player::update() {
-
+    this->machine->set_inputs(this->input);
 }
 
 void Player::render(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
@@ -40,6 +40,16 @@ void Player::render(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
         SDL_UpdateTexture(this->texture, &texture_rect, pixels, 320); // The 320 is the width of a gameboy screen (160) times the pixel size in bytes (2)
     }
     SDL_RenderCopy(renderer, this->texture, &texture_rect, dst_rect);
+}
+
+void Player::add_input(uint8_t button) {
+    this->input |= button;
+}
+
+void Player::remove_input(uint8_t button) {
+    if (this->input | button) {
+        this->input ^= button;
+    }
 }
 
 int Player::getPlayerIndex() {

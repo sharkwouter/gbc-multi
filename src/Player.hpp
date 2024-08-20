@@ -13,6 +13,7 @@ private:
     SDL_Texture * texture = nullptr;
 
     SDL_JoystickID gamepad_id  = -1;
+    uint8_t input = 0;
 public:
     Player(SDL_JoystickID id, std::vector<uint8_t> * romdata);
     ~Player();
@@ -20,6 +21,9 @@ public:
     int getPlayerIndex();
     SDL_JoystickID getGamepadId() {return gamepad_id;}
     bool isConnected();
+
+    void add_input(uint8_t button);
+    void remove_input(uint8_t button);
 
     void update();
     void render(SDL_Renderer * renderer, SDL_Rect * dst_rect);
