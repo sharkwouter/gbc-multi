@@ -1,14 +1,12 @@
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <libgbc/machine.hpp>
 #include <vector>
 
 #include "Player.hpp"
+#include "constants.hpp"
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-#define GB_SCREEN_WIDTH 160
-#define GB_SCREEN_HEIGHT 144
 
 bool running = true;
 std::vector<uint8_t> romdata;
@@ -129,11 +127,68 @@ void handleGamepadReleaseEvent(SDL_ControllerButtonEvent cbutton) {
     }
 }
 
-void handleKeyboardDownInputEvent(SDL_Keycode key) {
+void handleKeyboardDownPressEvent(SDL_Keycode key) {
     switch (key)
     {
         case SDLK_ESCAPE:
             running = false;
+            break;
+        case SDLK_BACKSPACE:
+            add_input(-1, gbc::BUTTON_SELECT);
+            break;
+        case SDLK_RETURN:
+            add_input(-1, gbc::BUTTON_START);
+            break;
+        case SDLK_z:
+            add_input(-1, gbc::BUTTON_A);
+            break;
+        case SDLK_x:
+            add_input(-1, gbc::BUTTON_B);
+            break;
+        case SDLK_UP:
+            add_input(-1, gbc::DPAD_UP);
+            break;
+        case SDLK_DOWN:
+            add_input(-1, gbc::DPAD_DOWN);
+            break;
+        case SDLK_LEFT:
+            add_input(-1, gbc::DPAD_LEFT);
+            break;
+        case SDLK_RIGHT:
+            add_input(-1, gbc::DPAD_RIGHT);
+            break;
+    }
+}
+
+void handleKeyboardDownReleaseEvent(SDL_Keycode key) {
+    switch (key)
+    {
+        case SDLK_ESCAPE:
+            running = false;
+            break;
+        case SDLK_BACKSPACE:
+            remove_input(-1, gbc::BUTTON_SELECT);
+            break;
+        case SDLK_RETURN:
+            remove_input(-1, gbc::BUTTON_START);
+            break;
+        case SDLK_z:
+            remove_input(-1, gbc::BUTTON_A);
+            break;
+        case SDLK_x:
+            remove_input(-1, gbc::BUTTON_B);
+            break;
+        case SDLK_UP:
+            remove_input(-1, gbc::DPAD_UP);
+            break;
+        case SDLK_DOWN:
+            remove_input(-1, gbc::DPAD_DOWN);
+            break;
+        case SDLK_LEFT:
+            remove_input(-1, gbc::DPAD_LEFT);
+            break;
+        case SDLK_RIGHT:
+            remove_input(-1, gbc::DPAD_RIGHT);
             break;
     }
 }
@@ -141,24 +196,30 @@ void handleKeyboardDownInputEvent(SDL_Keycode key) {
 int main(int argv, char** args) {
     if (argv != 2) {
         printf("Please specify a game\n");
-        exit(5);
+        exit(1);
     }
     romdata = load_file(args[1]);
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER | SDL_INIT_TIMER) != 0) {
-        printf("couldn't init SDL: %s", SDL_GetError());
-        exit(1);
+    if (TTF_Init() == -1) {
+        printf("couldn't init SDL_ttf: %s\n", TTF_GetError());
+        exit(2);
     }
 
-    SDL_Window * window = SDL_CreateWindow("GBC-Multi", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_RESIZABLE);
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER | SDL_INIT_TIMER) != 0) {
+        printf("couldn't init SDL: %s", SDL_GetError());
+        exit(3);
+    }
+
+    SDL_Window * window = SDL_CreateWindow("GBC-Multi", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, START_SCREEN_WIDTH, START_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
     if (window == nullptr) {
         printf("couldn't create window: %s", SDL_GetError());
-        exit(2);
+        exit(4);
     }
 
     SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == nullptr) {
         printf("couldn't create renderer: %s", SDL_GetError());
+        exit(5);
     }
 
     SDL_Event event;
@@ -183,10 +244,17 @@ int main(int argv, char** args) {
                     handleGamepadReleaseEvent(event.cbutton);
                     break;
                 case SDL_KEYDOWN:
-                    handleKeyboardDownInputEvent(event.key.keysym.sym);
+                    handleKeyboardDownPressEvent(event.key.keysym.sym);
+                    break;
+                case SDL_KEYUP:
+                    handleKeyboardDownReleaseEvent(event.key.keysym.sym);
                     break;
             }
         }
+        if (!players.size()) {
+
+        }
+
         for(Player * player : players) {
             player->update();
         }
@@ -211,5 +279,6 @@ int main(int argv, char** args) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    TTF_Quit();
     return 0;
 }
