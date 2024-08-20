@@ -18,10 +18,19 @@ Player::~Player() {
 }
 
 void Player::update() {
-    this->machine->set_inputs(this->input);
+    if(this->machine && this->machine->is_running()) {
+        this->machine->set_inputs(this->input);
+        return;
+    }
 }
 
 void Player::render(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
+    if(this->machine && this->machine->is_running()) {
+        this->renderMachine(renderer, dst_rect);
+    }
+}
+
+void Player::renderMachine(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
     static SDL_Rect texture_rect = {0, 0, 160, 144};
     if (this->texture == nullptr) {
         this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING, 160, 144);

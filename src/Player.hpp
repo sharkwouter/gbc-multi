@@ -15,6 +15,8 @@ private:
 
     SDL_JoystickID gamepad_id  = -1;
     uint8_t input = 0;
+
+    void renderMachine(SDL_Renderer * renderer, SDL_Rect * dst_rect);
 public:
     Player(SDL_JoystickID id, std::vector<uint8_t> * romdata);
     ~Player();
