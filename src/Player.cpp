@@ -29,7 +29,7 @@ void Player::render(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
     if(this->machine->is_running()) {
         this->machine->simulate_one_frame();
     }
-    SDL_UpdateTexture(this->texture, &texture_rect, &this->machine->gpu.pixels()[0], 160*2);
+    SDL_UpdateTexture(this->texture, &texture_rect, &this->machine->gpu.pixels()[0], 320); // The 320 is the width of a gameboy screen (160) times the pixel size in bytes (2)
     SDL_RenderCopy(renderer, this->texture, &texture_rect, dst_rect);
 }
 
