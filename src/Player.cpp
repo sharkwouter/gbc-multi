@@ -21,8 +21,7 @@ void Player::update() {
 
 }
 
-static u_int16_t pixels[160*144];
-void Player::render(SDL_Renderer * renderer) {
+void Player::render(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
     static SDL_Rect texture_rect = {0, 0, 160, 144};
     if (this->texture == nullptr) {
         this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING, 160, 144);
@@ -31,7 +30,7 @@ void Player::render(SDL_Renderer * renderer) {
         this->machine->simulate_one_frame();
     }
     SDL_UpdateTexture(this->texture, &texture_rect, &this->machine->gpu.pixels()[0], 160*2);
-    SDL_RenderCopy(renderer, this->texture, NULL, NULL);
+    SDL_RenderCopy(renderer, this->texture, &texture_rect, dst_rect);
 }
 
 int Player::getPlayerIndex() {

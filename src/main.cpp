@@ -5,6 +5,11 @@
 
 #include "Player.hpp"
 
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+#define GB_SCREEN_WIDTH 160
+#define GB_SCREEN_HEIGHT 144
+
 bool running = true;
 std::vector<uint8_t> romdata;
 std::vector<Player*> players;
@@ -81,7 +86,7 @@ int main(int argv, char** args) {
         exit(1);
     }
 
-    SDL_Window * window = SDL_CreateWindow("GBC-Multi", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 160, 144, SDL_WINDOW_SHOWN);
+    SDL_Window * window = SDL_CreateWindow("GBC-Multi", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_RESIZABLE);
     if (window == nullptr) {
         printf("couldn't create window: %s", SDL_GetError());
         exit(2);
@@ -119,8 +124,17 @@ int main(int argv, char** args) {
             player->update();
         }
 
-        for(Player * player : players) {
-            player->render(renderer);
+        for(int i = 0; i < players.size(); i++) {
+            SDL_Rect window_rect;
+            
+            SDL_Rect dst;
+            SDL_GetWindowSize(window, &window_rect.w, &window_rect.h);
+
+            dst.x = i * window_rect.w/players.size();
+            dst.y = 0;
+            dst.w = window_rect.w/players.size();
+            dst.h = window_rect.h;
+            players[i]->render(renderer, &dst);
         }
         SDL_RenderPresent(renderer);
     }

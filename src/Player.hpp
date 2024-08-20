@@ -22,7 +22,7 @@ public:
     bool isConnected();
 
     void update();
-    void render(SDL_Renderer * renderer);
+    void render(SDL_Renderer * renderer, SDL_Rect * dst_rect);
 };
 
 #endif // PLAYER_HPP
