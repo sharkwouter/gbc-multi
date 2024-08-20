@@ -10,7 +10,8 @@ class Player {
 private:
     SDL_GameController * gamepad = nullptr;
     gbc::Machine * machine = nullptr;
-    
+    SDL_Texture * texture = nullptr;
+
     SDL_JoystickID gamepad_id  = -1;
 public:
     Player(SDL_JoystickID id, std::vector<uint8_t> * romdata);
@@ -21,7 +22,7 @@ public:
     bool isConnected();
 
     void update();
-    void render(SDL_Texture * target);
+    void render(SDL_Renderer * renderer);
 };
 
 #endif // PLAYER_HPP

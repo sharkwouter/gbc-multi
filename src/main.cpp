@@ -119,7 +119,7 @@ int main(int argv, char** args) {
         }
 
         for(Player * player : players) {
-            player->render(NULL);
+            player->render(renderer);
         }
     }
     for(Player * player : players) {

@@ -13,15 +13,24 @@ Player::Player(SDL_JoystickID id, std::vector<uint8_t> * romdata) {
 Player::~Player() {
     SDL_Log("Cleanup for player with index %i", this->getPlayerIndex());
     SDL_GameControllerClose(this->gamepad);
+    SDL_DestroyTexture(this->texture);
     free(this->machine);
 }
 
 void Player::update() {
-    
+
 }
 
-void Player::render(SDL_Texture * target) {
-
+void Player::render(SDL_Renderer * renderer) {
+    if (this->texture == nullptr) {
+        this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 160, 144);
+    }
+    if(this->machine->is_running()) {
+        this->machine->simulate_one_frame();
+    }
+    for(u_int16_t pixel: this->machine->gpu.pixels()) {
+        // Write pixels
+    }
 }
 
 int Player::getPlayerIndex() {
