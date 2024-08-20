@@ -36,19 +36,15 @@ void Player::renderMachine(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
         this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING, 160, 144);
     }
     if(this->machine->is_running()) {
-        this->machine->simulate_one_frame();
-    }
-    if (this->machine->is_cgb()) { 
-        // This is a color rom, just copy the pixels from the gpu into the texture
-        SDL_UpdateTexture(this->texture, &texture_rect, &this->machine->gpu.pixels()[0], 320); // The 320 is the width of a gameboy screen (160) times the pixel size in bytes (2)
-    } else {
-        uint16_t pixels[160*144];
-        for(int i = 0; i < 160*144; i++) {
-              pixels[i] = this->machine->gpu.getpal(i*2) | (this->machine->gpu.getpal(i*2+1) << 8);
+        if (!this->machine->is_cgb()) {
+            SDL_Log("Original Gameboy games cannot be rendered");
+            this->machine->stop();
+            return;
         }
-        SDL_UpdateTexture(this->texture, &texture_rect, pixels, 320); // The 320 is the width of a gameboy screen (160) times the pixel size in bytes (2)
+        this->machine->simulate_one_frame();
+        SDL_UpdateTexture(this->texture, &texture_rect, &this->machine->gpu.pixels()[0], 320); // The 320 is the width of a gameboy screen (160) times the pixel size in bytes (2)
+        SDL_RenderCopy(renderer, this->texture, &texture_rect, dst_rect);
     }
-    SDL_RenderCopy(renderer, this->texture, &texture_rect, dst_rect);
 }
 
 void Player::add_input(uint8_t button) {
