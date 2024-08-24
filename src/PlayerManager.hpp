@@ -17,7 +17,9 @@ public:
     PlayerManager();
     ~PlayerManager();
 
-    bool isActive();
+    bool isActive() {return this->active;}
+
+    int getGamepadId();
 
     void handleInput(Input input);
     void update();

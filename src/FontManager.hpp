@@ -9,9 +9,9 @@
 
 class FontManager {
 private:
-    TTF_Font * font_title;
-    TTF_Font * font;
-    TTF_Font * font_small;
+    TTF_Font * font_title = nullptr;
+    TTF_Font * font = nullptr;
+    TTF_Font * font_small = nullptr;
 public:
     FontManager();
     ~FontManager();

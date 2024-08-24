@@ -4,7 +4,7 @@
 #include "InputType.hpp"
 
 typedef struct {
-    int gamepad;
+    int gamepad_id;
     InputType type;
     bool released;
 } Input;

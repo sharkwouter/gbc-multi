@@ -1,21 +1,31 @@
 #include "FontManager.hpp"
 
+#include <stdexcept>
+
 #include "constants.hpp"
 
 FontManager::FontManager() {
-    font_small = TTF_OpenFont("assets/PublicPixel.ttf", FONT_SIZE / 2);
-    font = TTF_OpenFont("assets/PublicPixel.ttf", FONT_SIZE);
-    font_title = TTF_OpenFont("assets/PublicPixel.ttf", FONT_SIZE * 2);
+    if (TTF_Init() == -1) {
+        throw std::runtime_error(TTF_GetError());
+    }
+
+    this->font_small = TTF_OpenFont("assets/PublicPixel.ttf", FONT_SIZE / 2);
+    this->font = TTF_OpenFont("assets/PublicPixel.ttf", FONT_SIZE);
+    this->font_title = TTF_OpenFont("assets/PublicPixel.ttf", FONT_SIZE * 2);
+    if (!this->font_small || !this->font || !this->font_title) {
+        throw std::runtime_error(TTF_GetError());
+    }
 }
 
 FontManager::~FontManager() {
     TTF_CloseFont(font_title);
     TTF_CloseFont(font);
     TTF_CloseFont(font_small);
+    TTF_Quit();
 }
 
 SDL_Texture * FontManager::getTexture(SDL_Renderer *renderer, std::string text, FontType font_type, SDL_Color color={0,0,0,255}) {
-    TTF_Font * current_font = NULL;
+    TTF_Font * current_font = nullptr;
     switch (font_type)
     {
     case FontType::NORMAL:

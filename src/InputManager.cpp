@@ -59,7 +59,7 @@ void InputManager::getInputs(std::vector<Input> * inputs) {
 
 Input InputManager::getGamepadInput(SDL_ControllerButtonEvent event, bool released) {
     Input input;
-    input.gamepad = event.which;
+    input.gamepad_id = event.which;
     input.released = released;
 
     switch (event.button)
@@ -97,7 +97,7 @@ Input InputManager::getGamepadInput(SDL_ControllerButtonEvent event, bool releas
 
 Input InputManager::getKeyboardInput(SDL_Keycode button, bool released) {
     Input input;
-    input.gamepad = -1;
+    input.gamepad_id = -1;
     input.released = released;
 
     switch (button)
