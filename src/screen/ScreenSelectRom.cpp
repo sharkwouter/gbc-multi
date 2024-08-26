@@ -78,7 +78,7 @@ void ScreenSelectRom::getRoms() {
     SDL_Log("Looking for roms");
     for (auto &rom : rom_iterator) {
         if (std::regex_match(rom.path().string(), rom_regex)) {
-            std::string name = rom.path().stem().string();
+            std::string name = rom.path().filename().string();
             SDL_Log("Found rom: %s", name.c_str());
             this->roms.push_back(name);
             this->texts.push_back(nullptr);
