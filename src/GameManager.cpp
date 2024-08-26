@@ -120,13 +120,16 @@ void GameManager::drawSplashScreen() {
 
 
 void GameManager::drawPlayerScreens() {
-    int i;
+    int i = 0;
     SDL_Rect window_rect;
 
     window_rect.x = 0;
     window_rect.y = 0;
     SDL_GetWindowSize(this->window, &window_rect.w, &window_rect.h);
     for(PlayerManager* player : this->player_managers) {
+        if (!player->isActive()) {
+            continue;
+        }
         SDL_Rect dst;
         dst.x = 0;
         dst.y = 0;
@@ -134,7 +137,7 @@ void GameManager::drawPlayerScreens() {
         dst.h = window_rect.h;
         if(this->active_players > 1) {
             dst.w /= 2;
-            dst.x += (i % 2) * dst.w; 
+            dst.x += (i % 2) * dst.w;
         }
         if(this->active_players > 2) {
             dst.h /= 2;
