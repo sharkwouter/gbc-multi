@@ -15,7 +15,7 @@ PlayerManager::~PlayerManager() {
 
 void PlayerManager::handleInput(Input input) {
     if (!this->active) {
-        if (input.type == InputType::START) {
+        if (input.type == InputType::START || input.type == InputType::A) {
             SDL_Log("Activating player with controller id %i", this->getGamepadId());
             this->active = true;
             if (this->screen == nullptr) {
