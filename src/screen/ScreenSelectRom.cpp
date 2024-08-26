@@ -20,14 +20,14 @@ void ScreenSelectRom::handleInput(Input input) {
     case InputType::UP:
         selected -= 1;
         if (selected < 0) {
-            selected = (int) this->roms.size() - 1;
+            selected = 0;
         }
         this->resetTexts();
         break;
     case InputType::DOWN:
         selected += 1;
         if (selected >= (int) this->roms.size()) {
-            selected = 0;
+            selected = (int) this->roms.size() -1;
         }
         this->resetTexts();
         break;
@@ -41,7 +41,7 @@ void ScreenSelectRom::update() {
 }
 
 void ScreenSelectRom::draw(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
-    for(int i = 0; i < (int) this->roms.size(); i++) {
+    for(int i = this->selected; i < (int) this->roms.size(); i++) {
         if (this->texts[i] == nullptr) {
             if (this->selected == i) {
                 this->texts[i] = this->font_manager->getTexture(renderer, this->roms[i], FontType::TITLE, {255, 0, 0, 255});
@@ -52,8 +52,11 @@ void ScreenSelectRom::draw(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
         SDL_Rect text_rect;
         SDL_QueryTexture(this->texts[i], NULL, NULL, &text_rect.w, &text_rect.h);
         text_rect.x = dst_rect->x;
-        text_rect.y = dst_rect->y + text_rect.h*i;
+        text_rect.y = dst_rect->y + text_rect.h*(i-selected);
         text_rect.w = std::min(text_rect.w, dst_rect->w);
+        if ((text_rect.y + text_rect.h) > (dst_rect->y + dst_rect->h)) {
+            continue;
+        }
         SDL_RenderCopy(renderer, this->texts[i], NULL, &text_rect);
     }
 }
