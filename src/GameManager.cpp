@@ -9,13 +9,13 @@ GameManager::GameManager() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER | SDL_INIT_TIMER) != 0) {
         throw std::runtime_error(SDL_GetError());
     }
+    this->font_manager = new FontManager();
     this->player_managers.reserve(4);
     for (size_t i = 0; i < 4; i++) {
-        this->player_managers.push_back(new PlayerManager());
+        this->player_managers.push_back(new PlayerManager(font_manager));
     }
     this->player_managers[0]->connect(KEYBOARD_ID);
 
-    this->font_manager = new FontManager();
     this->input_manager = new InputManager(&player_managers);
 }
 
@@ -115,6 +115,14 @@ void GameManager::drawPlayerScreens() {
     int i;
     SDL_Rect window_rect;
 
+    // Get the amount of active players
+    int active_players = 0;
+    for(PlayerManager* player : this->player_managers) {
+        if(player->isActive()) {
+            active_players++;
+        }
+    }
+
     window_rect.x = 0;
     window_rect.y = 0;
     SDL_GetWindowSize(this->window, &window_rect.w, &window_rect.h);
@@ -124,11 +132,11 @@ void GameManager::drawPlayerScreens() {
         dst.y = 0;
         dst.w = window_rect.w;
         dst.h = window_rect.h;
-        if(this->player_managers.size() > 1) {
+        if(active_players > 1) {
             dst.w /= 2;
             dst.x += (i % 2) * dst.w; 
         }
-        if(this->player_managers.size() > 2) {
+        if(active_players > 2) {
             dst.h /= 2;
             if(i > 1) {
                 dst.y += dst.h;

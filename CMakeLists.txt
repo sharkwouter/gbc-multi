@@ -32,5 +32,5 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/roms
+    ${CMAKE_SOURCE_DIR}/roms ${CMAKE_CURRENT_BINARY_DIR}/roms
 )

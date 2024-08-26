@@ -11,7 +11,7 @@ public:
 
     virtual void handleInput(Input input) = 0;
     virtual void update() = 0;
-    virtual void draw(SDL_Texture * target) = 0;
+    virtual void draw(SDL_Renderer * renderer, SDL_Rect * dst_rect) = 0;
 };
 
 #endif // SCREENBASE_HPP

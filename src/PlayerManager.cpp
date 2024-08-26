@@ -2,7 +2,10 @@
 
 #include <memory.h>
 
-PlayerManager::PlayerManager() {
+#include "screen/ScreenSelectRom.hpp"
+
+PlayerManager::PlayerManager(FontManager * font_manager) {
+    this->font_manager = font_manager;
 }
 
 PlayerManager::~PlayerManager() {
@@ -11,22 +14,47 @@ PlayerManager::~PlayerManager() {
 }
 
 void PlayerManager::handleInput(Input input) {
-    if (!this->active && input.type == InputType::START) {
-        SDL_Log("Activating player with controller id %i", this->getGamepadId());
-        this->active = true;
+    if (!this->active) {
+        if (input.type == InputType::START) {
+            SDL_Log("Activating player with controller id %i", this->getGamepadId());
+            this->active = true;
+            if (this->screen == nullptr) {
+                this->current_screen_type = ScreenType::SELECT_ROM;
+                this->screen = new ScreenSelectRom(font_manager);
+            }
+        }
+        return;
     }
+
+        switch(this->current_screen_type) {
+        case ScreenType::SELECT_ROM:
+            if(input.type == InputType::B) {
+                this->active = false;
+            } else if (input.type == InputType::A) {
+                SDL_Log("Selected %s", ((ScreenSelectRom*) this->screen)->getSelectedRom().c_str());
+            } else {
+                this->screen->handleInput(input);
+            }
+            break;
+        default:
+            break;
+    }
+    
 }
 
 void PlayerManager::update() {
-
+    if (!this->active) {
+        return;
+    }
+    this->screen->update();
 }
 
 void PlayerManager::draw(SDL_Renderer * renderer, SDL_Rect * dst_rect) {
-    SDL_Rect texture_rect = {0, 0, 160, 144};
-    if (this->texture == nullptr) {
-        this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING, texture_rect.w, texture_rect.h);
+    if (!this->active) {
+        return;
     }
-    SDL_RenderCopy(renderer, this->texture, &texture_rect, dst_rect);
+
+    this->screen->draw(renderer, dst_rect);
 }
 
 int PlayerManager::getGamepadId() {

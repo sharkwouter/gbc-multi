@@ -1,5 +1,5 @@
-#ifndef FONT_TYPE_HPP
-#define FONT_TYPE_HPP
+#ifndef FONTTYPE_HPP
+#define FONTTYPE_HPP
 
 enum class FontType {
     SMALL,
@@ -7,4 +7,4 @@ enum class FontType {
     TITLE
 };
 
-#endif // FONT_TYPE_HPP
+#endif // FONTTYPE_HPP
