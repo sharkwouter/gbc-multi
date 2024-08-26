@@ -21,6 +21,8 @@ private:
 
     SDL_Texture * splash_texture = nullptr;
 
+    int active_players = 0;
+
     void createWindowAndRenderer();
     void updatePlayerManagers();
 

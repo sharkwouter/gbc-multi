@@ -39,7 +39,6 @@ GameManager::~GameManager() {
 
 void GameManager::run() {
     std::vector<Input> inputs;
-    bool has_active_players = false;
     bool should_quit = false;
 
     this->createWindowAndRenderer();
@@ -58,16 +57,16 @@ void GameManager::run() {
             }
         }
 
-        has_active_players = false;
+        this->active_players = 0;
         for(PlayerManager* player : this->player_managers) {
             if (!player->isActive()) {
                 continue;
             }
-            has_active_players = true;
+            this->active_players++;
 
             player->update();
         }
-        if (has_active_players) {
+        if (this->active_players > 0) {
             this->drawPlayerScreens();
         } else {
             for (Input input : inputs) {
@@ -124,14 +123,6 @@ void GameManager::drawPlayerScreens() {
     int i;
     SDL_Rect window_rect;
 
-    // Get the amount of active players
-    int active_players = 0;
-    for(PlayerManager* player : this->player_managers) {
-        if(player->isActive()) {
-            active_players++;
-        }
-    }
-
     window_rect.x = 0;
     window_rect.y = 0;
     SDL_GetWindowSize(this->window, &window_rect.w, &window_rect.h);
@@ -141,11 +132,11 @@ void GameManager::drawPlayerScreens() {
         dst.y = 0;
         dst.w = window_rect.w;
         dst.h = window_rect.h;
-        if(active_players > 1) {
+        if(this->active_players > 1) {
             dst.w /= 2;
             dst.x += (i % 2) * dst.w; 
         }
-        if(active_players > 2) {
+        if(this->active_players > 2) {
             dst.h /= 2;
             if(i > 1) {
                 dst.y += dst.h;
