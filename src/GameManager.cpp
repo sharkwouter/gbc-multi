@@ -40,17 +40,22 @@ GameManager::~GameManager() {
 void GameManager::run() {
     std::vector<Input> inputs;
     bool has_active_players = false;
+    bool b_pressed = false;
 
     this->createWindowAndRenderer();
-    while (!this->input_manager->has_quit_triggered()) {
+    while (!this->input_manager->has_quit_triggered() && !(!has_active_players && b_pressed)) {
         SDL_SetRenderDrawColor(this->renderer, 255, 255, 255, 255);
         SDL_RenderClear(this->renderer);
 
         this->input_manager->getInputs(&inputs);
         this->updatePlayerManagers();
 
+        b_pressed = false;
         for (Input input : inputs) {
             for(PlayerManager* player : this->player_managers) {
+                if (input.type == InputType::B) {
+                    b_pressed = true;
+                }
                 if (input.gamepad_id == player->getGamepadId()) {
                     player->handleInput(input);
                 }
