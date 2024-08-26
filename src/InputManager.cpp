@@ -101,7 +101,7 @@ Input InputManager::getGamepadInput(SDL_ControllerButtonEvent event, bool releas
 
 Input InputManager::getKeyboardInput(SDL_Keycode button, bool released) {
     Input input;
-    input.gamepad_id = -1;
+    input.gamepad_id = KEYBOARD_ID;
 
     switch (button)
     {
