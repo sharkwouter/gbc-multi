@@ -4,15 +4,23 @@
 enum class InputType {
     NONE,
     A,
+    A_RELEASED,
     B,
+    B_RELEASED,
     START,
+    START_RELEASED,
     SELECT,
+    SELECT_RELEASED,
     UP,
+    UP_RELEASED,
     DOWN,
+    DOWN_RELEASED,
     LEFT,
+    LEFT_RELEASED,
     RIGHT,
+    RIGHT_RELEASED,
     PAUSE,
-    QUIT
+    PAUSE_RELEASED
 };
 
 #endif // INPUTTYPE_HPP

@@ -1,7 +1,7 @@
 #include "InputManager.hpp"
 
-InputManager::InputManager() {
-
+InputManager::InputManager(std::vector<PlayerManager *> * player_managers) {
+    this->player_managers = player_managers;
 }
 
 InputManager::~InputManager() {
@@ -16,10 +16,11 @@ void InputManager::getInputs(std::vector<Input> * inputs) {
                 this->quit_triggered = true;
                 break;
             case SDL_CONTROLLERDEVICEADDED:
-                this->controller_event_triggered = true;
+                this->connectGamepad(event.cdevice.which);
+                SDL_Log("Detecting device added");
                 break;
             case SDL_CONTROLLERDEVICEREMOVED:
-                this->controller_event_triggered = true;
+                this->disconnectGamepad();
                 break;
             case SDL_CONTROLLERBUTTONDOWN:
                 {
@@ -60,7 +61,6 @@ void InputManager::getInputs(std::vector<Input> * inputs) {
 Input InputManager::getGamepadInput(SDL_ControllerButtonEvent event, bool released) {
     Input input;
     input.gamepad_id = event.which;
-    input.released = released;
 
     switch (event.button)
     {
@@ -92,13 +92,16 @@ Input InputManager::getGamepadInput(SDL_ControllerButtonEvent event, bool releas
             input.type = InputType::NONE;
     }
 
+    if (released && input.type != InputType::NONE) {
+        input.type = (InputType) ((int) input.type + 1);
+    }
+
     return input;
 }
 
 Input InputManager::getKeyboardInput(SDL_Keycode button, bool released) {
     Input input;
     input.gamepad_id = -1;
-    input.released = released;
 
     switch (button)
     {
@@ -134,6 +137,53 @@ Input InputManager::getKeyboardInput(SDL_Keycode button, bool released) {
             input.type = InputType::NONE;
     }
 
+    if (released && input.type != InputType::NONE) {
+        input.type = (InputType) ((int) input.type + 1);
+    }
+
     return input;
 }
 
+void InputManager::connectGamepad(SDL_JoystickID id) {
+    SDL_Log("Players possible: %i", this->player_managers->size());
+    for(PlayerManager* player : *this->player_managers) {
+        SDL_Log("connected: %i", player->isConnected());
+        if (!player->isConnected()) {
+            player->connect(id);
+            return;
+        }
+    }
+
+    // If no connection was made, overwrite the player using the keyboard
+    for(PlayerManager* player : *this->player_managers) {
+        if (player->getGamepadId() == KEYBOARD_ID) {
+            player->connect(id);
+            return;
+        }
+    }
+
+    SDL_Log("Could not connect gamepad with id %i. There are already 4 connected gamepads.", id);
+}
+
+void InputManager::disconnectGamepad() {
+    bool keyboard_player_found = false;
+    for(PlayerManager* player : *this->player_managers) {
+        if(!player->isConnected()) {
+            player->disconnect();
+        } else {
+            if (player->getGamepadId() == KEYBOARD_ID) {
+                keyboard_player_found = true;
+            }
+        }
+    }
+
+    // Connect keyboard to first player manager without gamepad
+    if (!keyboard_player_found) {
+        for(PlayerManager* player : *this->player_managers) {
+            if(!player->isConnected()) {
+                player->connect(KEYBOARD_ID);
+                break;
+            }
+        }
+    }
+}

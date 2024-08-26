@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Input.hpp"
+#include "constants.hpp"
 
 class PlayerManager {
 
@@ -13,12 +14,15 @@ private:
     SDL_Texture * texture = nullptr;
 
     bool active = false;
+    int gamepad_id = NO_INPUT;
 public:
     PlayerManager();
     ~PlayerManager();
 
+    void connect(SDL_JoystickID id);
+    void disconnect();
+    bool isConnected();
     bool isActive() {return this->active;}
-
     int getGamepadId();
 
     void handleInput(Input input);

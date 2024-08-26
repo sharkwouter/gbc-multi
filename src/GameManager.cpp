@@ -3,15 +3,29 @@
 #include <stdexcept>
 
 #include "FontType.hpp"
+#include "constants.hpp"
 
-GameManager::GameManager() : input_manager(), font_manager() {
+GameManager::GameManager() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER | SDL_INIT_TIMER) != 0) {
         throw std::runtime_error(SDL_GetError());
     }
-    this->player_managers.push_back(new PlayerManager());
+    this->player_managers.reserve(4);
+    for (size_t i = 0; i < 4; i++) {
+        this->player_managers.push_back(new PlayerManager());
+    }
+    this->player_managers[0]->connect(KEYBOARD_ID);
+
+    this->font_manager = new FontManager();
+    this->input_manager = new InputManager(&player_managers);
 }
 
 GameManager::~GameManager() {
+    for(size_t i = 0; i < player_managers.size(); i++) {
+        delete player_managers[i];
+        player_managers[i] = nullptr;
+    }
+    delete this->input_manager;
+    delete this->font_manager;
     if (renderer) {
         SDL_DestroyRenderer(renderer);
     }
@@ -28,11 +42,11 @@ void GameManager::run() {
     bool has_active_players = false;
 
     this->createWindowAndRenderer();
-    while (!this->input_manager.has_quit_triggered()) {
+    while (!this->input_manager->has_quit_triggered()) {
         SDL_SetRenderDrawColor(this->renderer, 255, 255, 255, 255);
         SDL_RenderClear(this->renderer);
 
-        this->input_manager.getInputs(&inputs);
+        this->input_manager->getInputs(&inputs);
         this->updatePlayerManagers();
 
         for (Input input : inputs) {
@@ -74,9 +88,10 @@ void GameManager::createWindowAndRenderer() {
 }
 
 void GameManager::updatePlayerManagers() {
-    if (!this->input_manager.has_controller_event_triggered()) {
+    if (!this->input_manager->has_controller_event_triggered()) {
         return;
     }
+
 }
 
 void GameManager::drawSplashScreen() {
@@ -84,7 +99,7 @@ void GameManager::drawSplashScreen() {
     SDL_Rect splash_rect;
 
     if(this->splash_texture == nullptr) {
-        this->splash_texture = font_manager.getTexture(this->renderer, "Press start/enter", FontType::TITLE,  {0, 0, 0, 255});
+        this->splash_texture = font_manager->getTexture(this->renderer, "Press start/enter", FontType::TITLE,  {0, 0, 0, 255});
     }
 
     SDL_GetWindowSize(this->window, &window_rect.w, &window_rect.h);

@@ -7,4 +7,7 @@ inline constexpr int START_SCREEN_HEIGHT = 480;
 
 inline constexpr int FONT_SIZE = 14;
 
+inline constexpr int KEYBOARD_ID = -1;
+inline constexpr int NO_INPUT = -2;
+
 #endif // CONSTANTS_HPP

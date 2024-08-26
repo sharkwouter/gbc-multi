@@ -6,7 +6,6 @@
 typedef struct {
     int gamepad_id;
     InputType type;
-    bool released;
 } Input;
 
 #endif // INPUT_HPP

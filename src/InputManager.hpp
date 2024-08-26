@@ -5,10 +5,13 @@
 #include <vector>
 
 #include "Input.hpp"
+#include "PlayerManager.hpp"
 
 class InputManager {
 private:
     SDL_Event event;
+
+    std::vector<PlayerManager*> * player_managers = nullptr;
 
     bool quit_triggered = false;
     bool controller_event_triggered = false;
@@ -16,8 +19,10 @@ private:
     Input getGamepadInput(SDL_ControllerButtonEvent event, bool released);
     Input getKeyboardInput(SDL_Keycode event, bool released);
 
+    void connectGamepad(SDL_JoystickID id);
+    void disconnectGamepad();
 public:
-    InputManager();
+    InputManager(std::vector<PlayerManager *> * player_managers);
     ~InputManager();
 
     void getInputs(std::vector<Input> * inputs);

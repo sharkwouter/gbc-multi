@@ -14,8 +14,8 @@ private:
     SDL_Window * window = nullptr;
     SDL_Renderer * renderer = nullptr;
 
-    InputManager input_manager;
-    FontManager font_manager;
+    InputManager * input_manager = nullptr;
+    FontManager * font_manager = nullptr;
 
     std::vector<PlayerManager*> player_managers;
 
