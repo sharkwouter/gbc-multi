@@ -1,4 +1,4 @@
-# mGBA for multiplayer
+# Multiboy
 
 It has long bothered me that there is no Gameboy emulator that properly supports multiplayer on the same system. There are some options, but they are not as plug-in-play as I would want them to be.
 
