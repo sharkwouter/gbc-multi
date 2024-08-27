@@ -3,6 +3,7 @@
 #include <memory.h>
 
 #include "screen/ScreenSelectRom.hpp"
+#include "screen/ScreenSelectName.hpp"
 
 PlayerManager::PlayerManager(FontManager * font_manager) {
     this->font_manager = font_manager;
@@ -18,20 +19,30 @@ void PlayerManager::handleInput(Input input) {
         if (input.type == InputType::START || input.type == InputType::A) {
             SDL_Log("Activating player with controller id %i", this->getGamepadId());
             this->active = true;
-            if (this->screen == nullptr) {
-                this->current_screen_type = ScreenType::SELECT_ROM;
-                this->screen = new ScreenSelectRom(font_manager);
-            }
+            this->switchScreen(ScreenType::SELECT_NAME);
         }
         return;
     }
 
-        switch(this->current_screen_type) {
+    switch(this->current_screen_type) {
+        case ScreenType::SELECT_NAME:
+            if(input.type == InputType::START) {
+                this->name = ((ScreenSelectName*) this->screen)->getSelectedName();
+                if (!this->name.empty()) {
+                    SDL_Log("Name is %s!", this->name.c_str());
+                    this->switchScreen(ScreenType::SELECT_ROM);
+                }
+            } else {
+                this->screen->handleInput(input);
+            }
+            break;
         case ScreenType::SELECT_ROM:
             if(input.type == InputType::B) {
                 this->active = false;
             } else if (input.type == InputType::A) {
-                SDL_Log("Selected %s", ((ScreenSelectRom*) this->screen)->getSelectedRom().c_str());
+                this->rom = ((ScreenSelectRom*) this->screen)->getSelectedRom();
+
+                SDL_Log("Selected %s", this->rom.c_str());
             } else {
                 this->screen->handleInput(input);
             }
@@ -95,4 +106,32 @@ void PlayerManager::disconnect() {
     }
     this->gamepad_id = NO_INPUT;
     this->active = false;
+}
+
+void PlayerManager::switchScreen(ScreenType next_screen_type) {
+    if (next_screen_type == this->current_screen_type) {
+        return;
+    }
+
+    switch (next_screen_type) {
+        case ScreenType::SELECT_ROM:
+            this->clearScreen();
+            screen = new ScreenSelectRom(font_manager);
+            this->current_screen_type = next_screen_type;
+            break;
+        case ScreenType::SELECT_NAME:
+            this->clearScreen();
+            screen = new ScreenSelectName(font_manager);
+            this->current_screen_type = next_screen_type;
+            break;
+        default:
+            break;
+    }
+}
+
+void PlayerManager::clearScreen() {
+    if (this->screen) {
+        free(this->screen);
+    }
+    this->screen = nullptr;
 }

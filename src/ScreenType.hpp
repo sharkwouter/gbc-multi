@@ -3,6 +3,7 @@
 
 enum class ScreenType {
     NONE,
+    SELECT_NAME,
     SELECT_ROM
 };
 

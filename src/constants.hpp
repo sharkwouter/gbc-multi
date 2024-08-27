@@ -13,4 +13,6 @@ inline constexpr int FONT_SIZE = 14;
 inline constexpr int KEYBOARD_ID = -1;
 inline constexpr int NO_INPUT = -2;
 
+inline constexpr int MAX_NAME_LENGTH = 10;
+
 #endif // CONSTANTS_HPP

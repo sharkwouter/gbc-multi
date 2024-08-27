@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <vector>
+#include <string>
 
 #include "Input.hpp"
 #include "constants.hpp"
@@ -19,9 +20,14 @@ private:
 
     bool active = false;
     int gamepad_id = NO_INPUT;
+    std::string name = "";
+    std::string rom = "";
 
     ScreenBase * screen = nullptr;
     ScreenType current_screen_type = ScreenType::NONE;
+
+    void switchScreen(ScreenType next_screen_type);
+    void clearScreen();
 public:
     PlayerManager(FontManager * font_manager);
     ~PlayerManager();

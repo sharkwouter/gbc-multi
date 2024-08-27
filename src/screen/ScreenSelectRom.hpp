@@ -12,11 +12,6 @@
 
 class ScreenSelectRom : public ScreenBase {
 private:
-    void resetTexts();
-public:
-    ScreenSelectRom(FontManager * font_manager);
-    ~ScreenSelectRom();
-
     FontManager * font_manager = nullptr;
 
     std::regex rom_regex{"^.*\\.gb[ac]?$"};
@@ -27,13 +22,17 @@ public:
 
     SDL_Texture * no_roms_found_texture = nullptr;
 
+    void resetTexts();
+    void getRoms();
+public:
+    ScreenSelectRom(FontManager * font_manager);
+    ~ScreenSelectRom();
+
+    std::string getSelectedRom();
+
     void handleInput(Input input);
     void update();
     void draw(SDL_Renderer * renderer, SDL_Rect * dst_rect);
-
-    void getRoms();
-
-    std::string getSelectedRom();
 };
 
 #endif // SCREENSELECTROM_HPP
