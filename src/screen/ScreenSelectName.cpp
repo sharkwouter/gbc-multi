@@ -89,6 +89,8 @@ std::string ScreenSelectName::getSelectedName() {
         if(this->name[i] == '_') {
             for (int j = i; j < MAX_NAME_LENGTH; j++) {
                 if (this->name[j] != '_') {
+                    // We found at least 1 non-empty character right of the current one
+                    // We add a space
                     result += ' ';
                     break;
                 }
