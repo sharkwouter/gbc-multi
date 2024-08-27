@@ -4,7 +4,9 @@
 enum class ScreenType {
     NONE,
     SELECT_NAME,
-    SELECT_ROM
+    SELECT_ROM,
+    PLAY,
+    PAUSE
 };
 
 #endif // SCREENTYPE_HPP

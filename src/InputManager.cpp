@@ -76,6 +76,9 @@ Input InputManager::getGamepadInput(SDL_ControllerButtonEvent event, bool releas
         case SDL_CONTROLLER_BUTTON_B:
             input.type = InputType::B;
             break;
+        case SDL_CONTROLLER_BUTTON_Y:
+            input.type = InputType::PAUSE;
+            break;
         case SDL_CONTROLLER_BUTTON_DPAD_UP:
             input.type = InputType::UP;
             break;
@@ -106,8 +109,7 @@ Input InputManager::getKeyboardInput(SDL_Keycode button, bool released) {
     switch (button)
     {
         case SDLK_ESCAPE:
-            this->quit_triggered = true;
-            input.type = InputType::NONE;
+            input.type = InputType::PAUSE;
             break;
         case SDLK_BACKSPACE:
             input.type = InputType::SELECT;
